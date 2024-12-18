@@ -80,7 +80,7 @@ footer {
 
 /* Media query for mobile devices */
 @media (max-width: 768px) {
-    .shazam-button {
+    button[onClick="() => recognizeSong('pc')"] {
         display: none;
     }
 }
