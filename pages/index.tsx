@@ -26,11 +26,18 @@ export default function Home() {
   const [isRecording, setIsRecording] = useState(false);
   const [hasMicrophone, setHasMicrophone] = useState(true);
   const [isCapturingAudio, setIsCapturingAudio] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const maxCaptureTime = 6000;
 
   useEffect(() => {
     console.log("Component rendered");
     checkMicrophone();
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   const checkMicrophone = async () => {
@@ -146,13 +153,15 @@ export default function Home() {
           >
             {isRecording ? 'Recording...' : 'Microphone'}
           </button>
-          <button
-            onClick={() => recognizeSong('pc')}
-            className="bg-white hover:bg-gray-200 text-gray-900 font-bold py-4 px-8 rounded-full text-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105"
-            disabled={isCapturingAudio}
-          >
-            {isCapturingAudio ? 'Capturing...' : 'PC Audio'}
-          </button>
+          {!isMobile && (
+            <button
+              onClick={() => recognizeSong('pc')}
+              className="bg-white hover:bg-gray-200 text-gray-900 font-bold py-4 px-8 rounded-full text-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105"
+              disabled={isCapturingAudio}
+            >
+              {isCapturingAudio ? 'Capturing...' : 'PC Audio'}
+            </button>
+          )}
         </div>
         <div className="bg-white bg-opacity-20 backdrop-filter backdrop-blur-lg rounded-lg p-4 mt-6 text-left">
           <h4 className="font-bold text-gray-200 mb-2">Important Note:</h4>
