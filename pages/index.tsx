@@ -27,6 +27,7 @@ export default function Home() {
   const [hasMicrophone, setHasMicrophone] = useState(true);
   const [isCapturingAudio, setIsCapturingAudio] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+    const [isAnimating, setIsAnimating] = useState(false);
   const maxCaptureTime = 6000;
 
   useEffect(() => {
@@ -63,6 +64,8 @@ export default function Home() {
     } else {
       setIsCapturingAudio(true);
     }
+        setIsAnimating(true);
+
 
     try {
       const stream = await (captureStream === 'microphone'
@@ -107,6 +110,7 @@ export default function Home() {
           } else {
             setIsCapturingAudio(false);
           }
+            setIsAnimating(false);
         }
       });
 
@@ -123,15 +127,21 @@ export default function Home() {
       } else {
         setIsCapturingAudio(false);
       }
+        setIsAnimating(false);
     }
   };
 
-  const captureAudioFromPC = async () => {
-    await recognizeSong('pc');
-  }
 
   const clearResults = () => {
     setRecognizedSong(null);
+  };
+
+  const handleCapture = async () => {
+    if (isMobile) {
+      await recognizeSong('microphone');
+    } else {
+      await recognizeSong('pc');
+    }
   };
 
   return (
@@ -147,21 +157,16 @@ export default function Home() {
         </p>
         <div className="flex justify-center space-x-6 mb-12">
           <button
-            onClick={() => recognizeSong('microphone')}
+            onClick={handleCapture}
             className="bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold py-4 px-8 rounded-full text-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105"
-            disabled={isRecording || !hasMicrophone}
+            disabled={isRecording || isCapturingAudio || !hasMicrophone}
           >
-            {isRecording ? 'Recording...' : 'Microphone'}
+            <img
+                src="/file.svg"
+                alt="Listening Ears"
+                className={`h-8 w-8 mx-auto ${isAnimating ? 'animate-pulse' : ''}`}
+            />
           </button>
-          {!isMobile && (
-            <button
-              onClick={() => recognizeSong('pc')}
-              className="bg-white hover:bg-gray-200 text-gray-900 font-bold py-4 px-8 rounded-full text-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105"
-              disabled={isCapturingAudio}
-            >
-              {isCapturingAudio ? 'Capturing...' : 'PC Audio'}
-            </button>
-          )}
         </div>
         <div className="bg-white bg-opacity-20 backdrop-filter backdrop-blur-lg rounded-lg p-4 mt-6 text-left">
           <h4 className="font-bold text-gray-200 mb-2">Important Note:</h4>
