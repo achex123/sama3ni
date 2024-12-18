@@ -77,3 +77,10 @@ footer {
     padding: 20px;
     text-align: center;
 }
+
+/* Media query for mobile devices */
+@media (max-width: 768px) {
+    .shazam-button {
+        display: none;
+    }
+}
